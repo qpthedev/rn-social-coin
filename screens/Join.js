@@ -1,6 +1,8 @@
 import React, { useRef, useState } from "react";
+import auth from "@react-native-firebase/auth";
 import styled from "styled-components/native";
 import colors from "../colors";
+import { ActivityIndicator, Alert } from "react-native";
 
 const Container = styled.View`
   background-color: ${colors.black_color};
@@ -35,11 +37,32 @@ const BtnText = styled.Text`
 const Join = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const passwordInput = useRef();
 
-  const onSubmitEditing = () => {
+  const onSubmitEmailEditing = () => {
     passwordInput.current.focus();
+  };
+
+  const onSubmitPasswordEditing = async () => {
+    if (email === "" || password === "") {
+      return Alert.alert("Complete the form.");
+    }
+    if (loading) {
+      return;
+    }
+    setLoading(true);
+    try {
+      await auth().createUserWithEmailAndPassword(email, password);
+      setLoading(false);
+    } catch (e) {
+      switch (e.code) {
+        case "auth/weak-password": {
+          Alert.alert("Password too weak!");
+        }
+      }
+    }
   };
 
   return (
@@ -52,7 +75,7 @@ const Join = () => {
         returnKeyType="next"
         value={email}
         onChangeText={(text) => setEmail(text)}
-        onSubmitEditing={onSubmitEditing}
+        onSubmitEditing={onSubmitEmailEditing}
         placeholderTextColor={"rgba(255, 255, 255, 0.7)"}
       />
       <TextInput
@@ -63,7 +86,16 @@ const Join = () => {
         value={password}
         onChangeText={(text) => setPassword(text)}
         placeholderTextColor={"rgba(255, 255, 255, 0.7)"}
+        onSubmitEditing={onSubmitPasswordEditing}
       />
+
+      <Btn onPress={onSubmitPasswordEditing}>
+        {loading ? (
+          <ActivityIndicator color="white" />
+        ) : (
+          <BtnText>Create Account</BtnText>
+        )}
+      </Btn>
     </Container>
   );
 };
