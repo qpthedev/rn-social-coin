@@ -12,7 +12,7 @@ const Wrapper = styled(Animated.createAnimatedComponent(View))`
 const CoinName = styled.Text`
   color: white;
   font-weight: 600;
-  font-size: 16px;
+  font-size: 12px;
 `;
 export const Icon = styled.Image`
   width: 40px;
