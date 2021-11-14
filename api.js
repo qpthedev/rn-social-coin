@@ -8,7 +8,7 @@ export const info = ({ queryKey }) =>
 
 export const history = ({ queryKey }) =>
   fetch(
-    `${BASE_URL}/tickers/${
-      queryKey[1]
-    }/historical?start=${new Date().toISOString()}&interval=30m`
+    `${BASE_URL}/tickers/${queryKey[1]}/historical?start=${
+      new Date().toISOString().split("T")[0]
+    }&interval=5m`
   ).then((response) => response.json());
